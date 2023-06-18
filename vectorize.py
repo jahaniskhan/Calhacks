@@ -1,4 +1,5 @@
 import pandas as pd
+import openai
 import pinecone
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -45,15 +46,47 @@ index = pinecone.Index(index_name)
 index.upsert(sample_docs, namespace="example_namespace")
 print("Items upserted to index")
 
+openai.api_key = "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"
+
+def get_gpt_response(input:str):
+    completion = openai.ChatCompletion.create(
+        model="gpt-4",  # Replace with the actual model ID of GPT-4
+        messages=[
+            {"role": "system", "content": "You are a knowledgable assistant that specializes in medical, hazardous and pharmaceutical waste compliance."},
+            {"role": "user", "content": input},
+        ],
+    )
+    return completion.choices[0].message['content']
+
+
 # Execute the query
-query = "sludges from electroplating operations"
+# query = get_gpt_response("What should I query?")
+# #query = "sludges from electroplating operations"
+# query_embedding = model.encode([query])[0].tolist()  # Convert query_embedding to a list
+
+# results = index.query(queries=[query_embedding], top_k=5)
+# print("Query executed")
+# for result in results.results:
+#     print(result.id)
+
+# similarities = cosine_similarity([query_embedding], embeddings)
+# most_similar_index = similarities.argmax()
+# print(sentences[most_similar_index])
+# Execute the query
+query = get_gpt_response("What should I query?")
 query_embedding = model.encode([query])[0].tolist()  # Convert query_embedding to a list
 
 results = index.query(queries=[query_embedding], top_k=5)
-print("Query executed")
-for result in results.results:
-    print(result.id)
+
+# Use GPT-4 to generate a response based on the query results
+response = get_gpt_response("The top results are: " + ", ".join([result.id for result in results.results]))
+print(response)
 
 similarities = cosine_similarity([query_embedding], embeddings)
 most_similar_index = similarities.argmax()
-print(sentences[most_similar_index])
+most_similar_sentence = sentences[most_similar_index]
+
+# Use GPT-4 to generate a response based on the most similar sentence
+response = get_gpt_response("The most similar sentence to the query is: " + most_similar_sentence)
+print(response)
+
