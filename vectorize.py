@@ -4,7 +4,7 @@ import pandas as pd
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
 #loading data
-df = pd.read_csv('HazardWasteSheet.csv')
+df = pd.read_csv('hazwaste.csv')
 
 sentences = df['Description'].values
 
