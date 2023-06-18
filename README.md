@@ -6,7 +6,7 @@ We compiled information from https://www.epa.gov/hw/defining-hazardous-waste-lis
 # Prerequisites 
 The prerequisite packages are included at the start of the main Python code.
 # UI Idea 
-[![UI_prototype](https://raw.githubusercontent.com/jahaniskhan/Calhacks/IMG_8325.png)
+![UI_prototype](https://raw.githubusercontent.com/jahaniskhan/Calhacks/IMG_8325.png)
 
 
 # Presentation 
