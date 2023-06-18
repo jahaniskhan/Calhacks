@@ -1,42 +1,59 @@
-from sentence_transformers import SentenceTransformer
 import pandas as pd
 import pinecone
+import numpy as np
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+import time
+
+# Initialize Pinecone
+pinecone.init(api_key="67abdf79-1c2d-4c83-a449-3af343b6b576", environment="us-west1-gcp-free")
+print("Pinecone initialized")
+pinecone.delete_index("pharma-index")
 
 
-pinecone.init(api_key ="8dd7f9d3-2492-4506-b050-aae9af21066b", environment = "asia-southeast1-gcp-free")
-pinecone.create_index("pharma-index",dimension = 768, metric = "cosine")
+# Create the index
+index_name = "pharma-index"
+pinecone.create_index(index_name, dimension=768, metric="cosine")
+print("Index created")
+time.sleep(30)
 
-
-
+# Load the model
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
-#loading data
+# Load the data
 df = pd.read_csv('hazwaste.csv')
-
+print("Data loaded")
 sentences = df['Description'].values
+epa_numbers = df['EPA'].values
 
-embeddings  = model.encode(sentences)
+# Encode sentences
+embeddings = model.encode(sentences)
+embeddings = np.array(embeddings)  # Convert to numpy array
+print("Sentences encoded")
 
-index = pinecone.Index(index_name="pharma-index")
-
+# Define the sample documents with embeddings and metadata
+sample_docs = []
 for i, embedding in enumerate(embeddings):
-    index.upsert(items={str(i): embedding})
+    sample_doc = {
+        "id": str(epa_numbers[i]),
+        "values": embedding.tolist()
+    }
+    sample_docs.append(sample_doc)
 
+# Upsert the sample documents into the Pinecone index
+index = pinecone.Index(index_name)
+index.upsert(sample_docs, namespace="example_namespace")
+print("Items upserted to index")
 
-#print(df.columns)
-#print(embeddings)
-query = "quenching bath from oilbath with cyanides"
+# Execute the query
+query = "sludges from electroplating operations"
+query_embedding = model.encode([query])[0].tolist()  # Convert query_embedding to a list
 
-query_embedding = model.encode([query])[0]
-results = index.query(queries =[query_embedding], top_k=5)
-
+results = index.query(queries=[query_embedding], top_k=5)
+print("Query executed")
 for result in results.results:
     print(result.id)
-#similarities = cosine_similarity([query_embedding], embeddings)
-#most_similar_index = similarities.argmax()
-#print(sentences[most_similar_index])
 
-
-
-
+similarities = cosine_similarity([query_embedding], embeddings)
+most_similar_index = similarities.argmax()
+print(sentences[most_similar_index])
