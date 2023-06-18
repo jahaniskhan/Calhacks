@@ -6,6 +6,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 pinecone.init(api_key ="3a31c149-9146-4b7b-9c60-7415e1bc5c9c", environment = "asia-southeast1-gcp-free")
 pinecone.create_index("pharma-index",768, "cosine")
+indexes = pinecone.list_indexes()
+
+# Print the indexes
+for index in indexes:
+    print(index)
 
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
