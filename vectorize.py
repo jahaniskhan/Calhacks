@@ -78,8 +78,11 @@ query_embedding = model.encode([query])[0].tolist()  # Convert query_embedding t
 
 results = index.query(queries=[query_embedding], top_k=5)
 
+#filter out if none
+
+filtered_results = [result.id for result in results.results if result.id is not None]
 # Use GPT-4 to generate a response based on the query results
-response = get_gpt_response("The top results are: " + ", ".join([result.id for result in results.results]))
+response = get_gpt_response("The top results are: " + ", ".join(filtered_results))
 print(response)
 
 similarities = cosine_similarity([query_embedding], embeddings)
