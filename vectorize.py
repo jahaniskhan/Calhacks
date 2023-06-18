@@ -46,11 +46,11 @@ index = pinecone.Index(index_name)
 index.upsert(sample_docs, namespace="example_namespace")
 print("Items upserted to index")
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 def get_gpt_response(input:str):
     completion = openai.ChatCompletion.create(
-        model="gpt-4",  # Replace with the actual model ID of GPT-4
+        model="gpt-3.5",  # Replace with the actual model ID of GPT-4
         messages=[
             {"role": "system", "content": "You are a knowledgable assistant that specializes in medical, hazardous and pharmaceutical waste compliance."},
             {"role": "user", "content": input},
