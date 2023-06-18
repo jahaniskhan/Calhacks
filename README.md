@@ -8,6 +8,7 @@ The prerequisite packages are included at the start of the main Python code.
 # UI Idea 
 
 # Presentation 
+https://docs.google.com/presentation/d/14oaqCstwF7rleTIWyMAUtRvRDyyQR5UALV8YkxMok0A/edit?usp=sharing
 
 
 
