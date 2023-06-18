@@ -6,8 +6,10 @@ model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 #loading data
 df = pd.read_csv('HazWasteSheet.csv')
 
-sentences = df['Description'].values
+#sentences = df['Description'].values
 
-embeddings  = model.encode(sentences)
+#embeddings  = model.encode(sentences)
+print(df.columns)
+
 
 
